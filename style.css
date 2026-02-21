@@ -48,11 +48,11 @@
 
 html,
 body {
-  height:100%;
   margin:0;
 }
 
 body {
+  min-height:100vh;
   font-family:"Sora","Avenir Next","Trebuchet MS",sans-serif;
   color:var(--text-main);
   background:
@@ -107,9 +107,18 @@ body::after {
 }
 
 body.embed-mode {
+  display:block;
   background:transparent;
   padding:0;
+  min-height:0;
   overflow:visible;
+}
+
+html.embed-mode,
+html.embed-mode body {
+  background:transparent;
+  height:auto;
+  min-height:0;
 }
 
 body.embed-mode::before,
@@ -120,6 +129,7 @@ body.embed-mode::after {
 body.embed-mode .layout {
   width:100%;
   max-width:none;
+  margin:0;
 }
 
 .layout {
