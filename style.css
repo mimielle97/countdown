@@ -26,8 +26,20 @@
   --button-border:rgba(255,255,255,.55);
   --status-ok:rgba(233,255,240,.96);
   --status-error:rgba(255,232,239,.96);
+  --status-muted:rgba(255,255,255,.70);
   --input-bg:rgba(255,255,255,.95);
   --input-text:rgba(79,27,49,.98);
+  --admin-surface:rgba(255,255,255,.20);
+  --admin-surface-strong:rgba(255,255,255,.26);
+  --admin-border:rgba(255,255,255,.36);
+  --admin-shadow:rgba(83,22,45,.24);
+  --row-surface:rgba(255,255,255,.16);
+  --row-border:rgba(255,255,255,.30);
+  --delete-bg:rgba(136,31,56,.34);
+  --delete-bg-hover:rgba(136,31,56,.48);
+  --delete-border:rgba(255,223,232,.48);
+  --code-bg:rgba(255,255,255,.18);
+  --code-text:rgba(255,245,250,.98);
   --card-blur:14px;
   --duration-in:700ms;
   --duration-stagger:900ms;
@@ -52,6 +64,20 @@ body {
   padding:clamp(16px,4vw,40px);
   box-sizing:border-box;
   overflow:hidden;
+}
+
+body.mode-admin,
+body.mode-empty {
+  display:block;
+  overflow:auto;
+}
+
+body.mode-admin {
+  padding:clamp(18px,3vw,32px);
+}
+
+body.mode-empty {
+  padding:clamp(20px,4vw,36px);
 }
 
 body::before,
@@ -187,6 +213,23 @@ body.embed-mode .card::after {
   opacity:.96;
 }
 
+.widget-status {
+  min-height:1em;
+  margin:2px 0 0;
+  text-align:center;
+  font-size:12px;
+  letter-spacing:.03em;
+  color:var(--status-muted);
+}
+
+.widget-status.ok {
+  color:var(--status-ok);
+}
+
+.widget-status.error {
+  color:var(--status-error);
+}
+
 .config-trigger {
   position:absolute;
   top:clamp(10px,2vw,16px);
@@ -216,7 +259,10 @@ body.embed-mode .card::after {
 .config-trigger:focus-visible,
 .config-close:focus-visible,
 .save-button:focus-visible,
+.delete-button:focus-visible,
+.link-button:focus-visible,
 .config-input:focus-visible,
+.admin-input:focus-visible,
 .color-field input:focus-visible {
   outline:2px solid var(--text-main);
   outline-offset:2px;
@@ -373,6 +419,221 @@ body.embed-mode .card::after {
   cursor:not-allowed;
 }
 
+.admin-layout,
+.empty-layout {
+  position:relative;
+  z-index:1;
+}
+
+.admin-layout {
+  width:min(100%,1080px);
+  margin:0 auto;
+}
+
+.admin-card {
+  border:1px solid var(--admin-border);
+  border-radius:clamp(20px,2.8vw,30px);
+  background:linear-gradient(152deg, var(--admin-surface) 0%, var(--admin-surface-strong) 100%);
+  box-shadow:0 14px 38px var(--admin-shadow), inset 0 1px 0 var(--surface-inner);
+  backdrop-filter:blur(var(--card-blur));
+  -webkit-backdrop-filter:blur(var(--card-blur));
+  padding:clamp(16px,2.8vw,30px);
+  display:grid;
+  gap:16px;
+}
+
+.admin-header {
+  display:grid;
+  gap:6px;
+}
+
+.admin-header h1 {
+  margin:0;
+  font-size:clamp(24px,3vw,34px);
+  letter-spacing:.02em;
+  color:var(--text-main);
+}
+
+.admin-header p {
+  margin:0;
+  color:var(--text-secondary);
+  font-size:clamp(13px,1.5vw,16px);
+}
+
+.admin-kicker {
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:11px;
+  color:var(--text-tertiary);
+}
+
+.admin-form {
+  border:1px solid var(--row-border);
+  border-radius:16px;
+  background:var(--row-surface);
+  padding:14px;
+  display:grid;
+  gap:8px;
+}
+
+.admin-form h2 {
+  margin:0 0 2px;
+  font-size:17px;
+  letter-spacing:.03em;
+}
+
+.admin-label {
+  display:grid;
+  gap:6px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.07em;
+  color:var(--text-secondary);
+}
+
+.admin-input {
+  width:100%;
+  box-sizing:border-box;
+  border:1px solid var(--panel-border);
+  border-radius:12px;
+  background:var(--input-bg);
+  color:var(--input-text);
+  padding:10px 12px;
+  font:inherit;
+  font-size:14px;
+  font-weight:700;
+}
+
+.admin-status,
+.item-status,
+.list-empty {
+  margin:0;
+  font-size:12px;
+  letter-spacing:.03em;
+  min-height:1em;
+  color:var(--status-muted);
+}
+
+.admin-status.ok,
+.item-status.ok {
+  color:var(--status-ok);
+}
+
+.admin-status.error,
+.item-status.error {
+  color:var(--status-error);
+}
+
+.admin-list {
+  display:grid;
+  gap:12px;
+}
+
+.widget-item {
+  border:1px solid var(--row-border);
+  border-radius:16px;
+  background:var(--row-surface);
+  padding:12px;
+  display:grid;
+  gap:10px;
+}
+
+.widget-item-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.widget-item-id {
+  margin:0;
+  font-weight:700;
+  letter-spacing:.04em;
+  color:var(--text-main);
+}
+
+.widget-fields {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.widget-actions {
+  display:flex;
+  gap:10px;
+}
+
+.delete-button,
+.link-button {
+  border-radius:12px;
+  border:1px solid var(--delete-border);
+  background:var(--delete-bg);
+  color:var(--text-main);
+  font:inherit;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.03em;
+  padding:10px 12px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.link-button {
+  background:var(--button-bg);
+  border-color:var(--button-border);
+}
+
+.delete-button:hover,
+.delete-button:focus-visible {
+  background:var(--delete-bg-hover);
+}
+
+.link-button:hover,
+.link-button:focus-visible {
+  background:var(--button-bg-hover);
+}
+
+.empty-layout {
+  width:min(100%,620px);
+  margin:0 auto;
+}
+
+.empty-card {
+  border:1px solid var(--admin-border);
+  border-radius:20px;
+  background:linear-gradient(152deg, var(--admin-surface) 0%, var(--admin-surface-strong) 100%);
+  box-shadow:0 12px 34px var(--admin-shadow), inset 0 1px 0 var(--surface-inner);
+  backdrop-filter:blur(var(--card-blur));
+  -webkit-backdrop-filter:blur(var(--card-blur));
+  padding:clamp(18px,3vw,28px);
+}
+
+.empty-card h1,
+.empty-card p {
+  margin:0;
+}
+
+.empty-card h1 {
+  font-size:clamp(24px,4vw,34px);
+  letter-spacing:.02em;
+}
+
+.empty-card p {
+  margin-top:10px;
+  color:var(--text-secondary);
+}
+
+.empty-card code {
+  background:var(--code-bg);
+  color:var(--code-text);
+  border:1px solid var(--panel-border);
+  border-radius:8px;
+  padding:2px 6px;
+}
+
 @keyframes card-in {
   from {
     opacity:0;
@@ -439,8 +700,26 @@ body.embed-mode .card::after {
   }
 
   .save-button,
+  .delete-button,
+  .link-button,
+  .admin-input,
   .config-input {
     font-size:13px;
+  }
+
+  .widget-fields {
+    grid-template-columns:1fr;
+  }
+
+  .widget-item-top,
+  .widget-actions {
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .admin-card {
+    padding:14px;
+    gap:12px;
   }
 }
 
