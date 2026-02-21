@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cuenta atrás</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <main class="layout">
+    <section class="card" role="group" aria-label="Cuenta atrás para el examen">
+      <p class="title" id="name" role="button" tabindex="0" aria-label="Editar texto del contador">Días para el examen Aux. Admin.</p>
+      <p class="digits" id="display" role="button" tabindex="0" aria-label="Editar fecha objetivo" aria-live="polite">--:--:--:--</p>
+      <div class="units" aria-hidden="true">
+        <span>DÍAS</span>
+        <span>HORAS</span>
+        <span>MIN</span>
+        <span>SEG</span>
+      </div>
+      <div class="date-editor" id="dateEditor">
+        <button class="date-close" id="closeDateEditor" type="button" aria-label="Cerrar selector de fecha">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 6 L18 18 M18 6 L6 18" />
+          </svg>
+        </button>
+        <label class="date-label" for="targetInput">Fecha del contador</label>
+        <input class="date-input" id="targetInput" type="datetime-local" />
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
