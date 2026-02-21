@@ -18,6 +18,14 @@
   --digit-shadow:rgba(72,22,40,.24);
   --panel-bg-strong:rgba(198,85,127,.94);
   --panel-bg-soft:rgba(222,112,149,.94);
+  --panel-overlay:rgba(217,90,133,.99);
+  --panel-border:rgba(255,255,255,.42);
+  --panel-divider:rgba(255,255,255,.24);
+  --button-bg:rgba(255,255,255,.20);
+  --button-bg-hover:rgba(255,255,255,.30);
+  --button-border:rgba(255,255,255,.55);
+  --status-ok:rgba(233,255,240,.96);
+  --status-error:rgba(255,232,239,.96);
   --input-bg:rgba(255,255,255,.95);
   --input-text:rgba(79,27,49,.98);
   --card-blur:14px;
@@ -72,6 +80,22 @@ body::after {
   background:radial-gradient(circle at 50% 50%, var(--haze-soft) 0%, var(--haze-none) 72%);
 }
 
+body.embed-mode {
+  background:transparent;
+  padding:0;
+  overflow:visible;
+}
+
+body.embed-mode::before,
+body.embed-mode::after {
+  display:none;
+}
+
+body.embed-mode .layout {
+  width:100%;
+  max-width:none;
+}
+
 .layout {
   width:min(100%,960px);
   position:relative;
@@ -95,7 +119,20 @@ body::after {
   box-sizing:border-box;
   position:relative;
   isolation:isolate;
+  overflow:hidden;
   animation:card-in var(--duration-in) var(--easing) both;
+}
+
+body.embed-mode .card {
+  border-color:var(--panel-border);
+  background:linear-gradient(145deg, var(--bg-sunrise-a) 0%, var(--bg-sunrise-b) 46%, var(--bg-sunrise-c) 100%);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  box-shadow:0 12px 26px var(--shadow-mid), inset 0 1px 0 var(--surface-inner);
+}
+
+body.embed-mode .card::after {
+  display:none;
 }
 
 .card::after {
@@ -116,17 +153,6 @@ body::after {
   letter-spacing:.06em;
   text-wrap:balance;
   animation:fade-up var(--duration-stagger) var(--easing) both;
-  cursor:text;
-}
-
-.title[contenteditable="true"] {
-  outline:none;
-}
-
-.title:focus-visible {
-  outline:2px solid var(--surface-inner);
-  outline-offset:4px;
-  border-radius:8px;
 }
 
 .digits {
@@ -141,13 +167,6 @@ body::after {
   text-shadow:0 10px 26px var(--digit-shadow);
   user-select:none;
   animation:fade-up var(--duration-stagger) var(--easing) 90ms both;
-  cursor:pointer;
-}
-
-.digits:focus-visible {
-  outline:2px solid var(--surface-inner);
-  outline-offset:6px;
-  border-radius:10px;
 }
 
 .units {
@@ -168,102 +187,190 @@ body::after {
   opacity:.96;
 }
 
-.date-editor {
-  display:grid;
-  gap:8px;
-  width:min(420px, calc(100% - 24px));
-  padding:12px;
-  border:1px solid rgba(255,255,255,.58);
-  border-radius:14px;
-  background:linear-gradient(160deg, var(--panel-bg-soft) 0%, var(--panel-bg-strong) 100%);
-  box-shadow:0 14px 30px var(--shadow-deep), inset 0 1px 0 var(--surface-inner);
+.config-trigger {
   position:absolute;
-  left:50%;
-  top:clamp(68px,9vw,120px);
-  z-index:3;
-  box-sizing:border-box;
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-  transform:translate(-50%, -8px) scale(.98);
-  transition:opacity 220ms var(--easing), transform 220ms var(--easing), visibility 0ms linear 220ms;
-}
-
-.date-close {
-  position:absolute;
-  top:8px;
-  right:8px;
-  width:28px;
-  height:28px;
-  display:grid;
-  place-items:center;
-  border:1px solid rgba(255,255,255,.55);
+  top:clamp(10px,2vw,16px);
+  right:clamp(10px,2vw,16px);
+  width:36px;
+  height:36px;
+  border:1px solid var(--button-border);
   border-radius:999px;
-  background:rgba(255,255,255,.18);
+  background:var(--button-bg);
   color:var(--text-main);
-  cursor:pointer;
+  display:none;
+  place-items:center;
   padding:0;
+  cursor:pointer;
+  z-index:3;
 }
 
-.date-close:hover {
-  background:rgba(255,255,255,.30);
+.card.can-edit .config-trigger {
+  display:grid;
 }
 
-.date-close:focus-visible {
+.config-trigger:hover,
+.config-close:hover {
+  background:var(--button-bg-hover);
+}
+
+.config-trigger:focus-visible,
+.config-close:focus-visible,
+.save-button:focus-visible,
+.config-input:focus-visible,
+.color-field input:focus-visible {
   outline:2px solid var(--text-main);
   outline-offset:2px;
 }
 
-.date-close svg {
+.config-trigger svg,
+.config-close svg {
   width:16px;
   height:16px;
 }
 
-.date-close path {
+.config-trigger path,
+.config-close path {
   fill:none;
   stroke:currentColor;
   stroke-width:2.2;
   stroke-linecap:round;
 }
 
-.date-editor.is-open {
+.config-panel {
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:clamp(18px,3.2vw,28px);
+  box-sizing:border-box;
+  display:grid;
+  align-content:start;
+  gap:10px;
+  background:linear-gradient(160deg, var(--panel-bg-soft) 0%, var(--panel-overlay) 100%);
+  border:1px solid var(--panel-border);
+  z-index:4;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  max-height:100%;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  transform:translateY(8px);
+  transition:opacity 200ms var(--easing), transform 200ms var(--easing), visibility 0ms linear 200ms;
+}
+
+.config-panel.is-open {
   opacity:1;
   visibility:visible;
   pointer-events:auto;
-  transform:translate(-50%, 0) scale(1);
-  transition:opacity 220ms var(--easing), transform 220ms var(--easing), visibility 0ms;
+  transform:translateY(0);
+  transition:opacity 200ms var(--easing), transform 200ms var(--easing), visibility 0ms;
 }
 
-.date-label {
-  text-align:center;
+.config-close {
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--button-border);
+  border-radius:999px;
+  background:var(--button-bg);
   color:var(--text-main);
-  font-size:12px;
-  font-weight:600;
-  letter-spacing:.06em;
-  padding-right:32px;
+  padding:0;
+  cursor:pointer;
 }
 
-.date-input {
+.config-title {
+  margin:0;
+  padding-right:36px;
+  font-size:clamp(18px,2.4vw,24px);
+  letter-spacing:.03em;
+}
+
+.config-label {
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+  color:var(--text-secondary);
+}
+
+.config-input {
   width:100%;
   box-sizing:border-box;
-  border:1px solid rgba(255,255,255,.75);
+  border:1px solid var(--panel-border);
   border-radius:12px;
   background:var(--input-bg);
   color:var(--input-text);
   padding:10px 12px;
   font:inherit;
-  font-size:15px;
+  font-size:14px;
   font-weight:700;
 }
 
-.date-input:focus-visible {
-  outline:2px solid var(--text-main);
-  outline-offset:2px;
+.color-grid {
+  margin-top:2px;
+  padding-top:8px;
+  border-top:1px solid var(--panel-divider);
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:10px;
 }
 
-.date-input::-webkit-calendar-picker-indicator {
-  opacity:.85;
+.color-field {
+  display:grid;
+  gap:6px;
+  font-size:11px;
+  letter-spacing:.08em;
+  color:var(--text-secondary);
+}
+
+.color-field input {
+  width:100%;
+  height:34px;
+  border:1px solid var(--panel-border);
+  border-radius:10px;
+  background:var(--input-bg);
+  padding:4px;
+  box-sizing:border-box;
   cursor:pointer;
+}
+
+.save-status {
+  min-height:1em;
+  margin:2px 0 0;
+  font-size:12px;
+  letter-spacing:.03em;
+  color:var(--text-main);
+}
+
+.save-status.ok {
+  color:var(--status-ok);
+}
+
+.save-status.error {
+  color:var(--status-error);
+}
+
+.save-button {
+  margin-top:2px;
+  width:100%;
+  border:1px solid var(--panel-border);
+  border-radius:12px;
+  background:var(--button-bg);
+  color:var(--text-main);
+  font:inherit;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.04em;
+  padding:10px 12px;
+  cursor:pointer;
+}
+
+.save-button:disabled {
+  opacity:.5;
+  cursor:not-allowed;
 }
 
 @keyframes card-in {
@@ -312,17 +419,28 @@ body::after {
     letter-spacing:.11em;
   }
 
-  .date-label {
-    font-size:11px;
+  .config-trigger {
+    width:34px;
+    height:34px;
   }
 
-  .date-input {
+  .config-panel {
+    padding:14px;
+    gap:7px;
+  }
+
+  .config-title {
+    font-size:18px;
+  }
+
+  .color-grid {
+    grid-template-columns:1fr;
+    gap:7px;
+  }
+
+  .save-button,
+  .config-input {
     font-size:13px;
-  }
-
-  .date-editor {
-    top:clamp(58px,18vw,96px);
-    width:min(360px, calc(100% - 20px));
   }
 }
 

@@ -15,23 +15,59 @@
 <body>
   <main class="layout">
     <section class="card" role="group" aria-label="Cuenta atrás para el examen">
-      <p class="title" id="name" role="button" tabindex="0" aria-label="Editar texto del contador">Días para el examen Aux. Admin.</p>
-      <p class="digits" id="display" role="button" tabindex="0" aria-label="Editar fecha objetivo" aria-live="polite">--:--:--:--</p>
+      <button class="config-trigger" id="openConfig" type="button" aria-label="Abrir configuración del widget">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 20h4l10.1-10.1a2.2 2.2 0 0 0 0-3.1l-.9-.9a2.2 2.2 0 0 0-3.1 0L4 16v4Z" />
+          <path d="m13.5 6.5 4 4" />
+        </svg>
+      </button>
+
+      <p class="title" id="name">Días para el examen Aux. Admin.</p>
+      <p class="digits" id="display" aria-live="polite">--:--:--:--</p>
       <div class="units" aria-hidden="true">
         <span>DÍAS</span>
         <span>HORAS</span>
         <span>MIN</span>
         <span>SEG</span>
       </div>
-      <div class="date-editor" id="dateEditor">
-        <button class="date-close" id="closeDateEditor" type="button" aria-label="Cerrar selector de fecha">
+
+      <section class="config-panel" id="configPanel" aria-label="Configuración del widget" aria-hidden="true">
+        <button class="config-close" id="closeConfig" type="button" aria-label="Cerrar configuración">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M6 6 L18 18 M18 6 L6 18" />
           </svg>
         </button>
-        <label class="date-label" for="targetInput">Fecha del contador</label>
-        <input class="date-input" id="targetInput" type="datetime-local" />
-      </div>
+
+        <h2 class="config-title">Configurar widget</h2>
+
+        <label class="config-label" for="titleInput">Texto</label>
+        <input class="config-input" id="titleInput" type="text" maxlength="90" />
+
+        <label class="config-label" for="targetInput">Fecha y hora</label>
+        <input class="config-input" id="targetInput" type="datetime-local" />
+
+        <div class="color-grid" aria-label="Configuración de colores">
+          <label class="color-field" for="colorAInput">
+            <span>Fondo A</span>
+            <input id="colorAInput" type="color" value="#d95a85" />
+          </label>
+          <label class="color-field" for="colorBInput">
+            <span>Fondo B</span>
+            <input id="colorBInput" type="color" value="#ef8fb0" />
+          </label>
+          <label class="color-field" for="colorCInput">
+            <span>Fondo C</span>
+            <input id="colorCInput" type="color" value="#ef8fb0" />
+          </label>
+          <label class="color-field" for="textColorInput">
+            <span>Texto</span>
+            <input id="textColorInput" type="color" value="#ffffff" />
+          </label>
+        </div>
+
+        <p class="save-status" id="saveStatus" aria-live="polite"></p>
+        <button class="save-button" id="saveConfig" type="button">Guardar cambios</button>
+      </section>
     </section>
   </main>
 
