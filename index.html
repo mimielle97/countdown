@@ -13,15 +13,8 @@
 </head>
 
 <body>
-  <main class="layout">
+  <main class="layout" id="widgetView" hidden>
     <section class="card" role="group" aria-label="Cuenta atrás para el examen">
-      <button class="config-trigger" id="openConfig" type="button" aria-label="Abrir configuración del widget">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M4 20h4l10.1-10.1a2.2 2.2 0 0 0 0-3.1l-.9-.9a2.2 2.2 0 0 0-3.1 0L4 16v4Z" />
-          <path d="m13.5 6.5 4 4" />
-        </svg>
-      </button>
-
       <p class="title" id="name">Días para el examen Aux. Admin.</p>
       <p class="digits" id="display" aria-live="polite">--:--:--:--</p>
       <div class="units" aria-hidden="true">
@@ -30,44 +23,63 @@
         <span>MIN</span>
         <span>SEG</span>
       </div>
+      <p class="widget-status" id="widgetStatus" aria-live="polite"></p>
+    </section>
+  </main>
 
-      <section class="config-panel" id="configPanel" aria-label="Configuración del widget" aria-hidden="true">
-        <button class="config-close" id="closeConfig" type="button" aria-label="Cerrar configuración">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M6 6 L18 18 M18 6 L6 18" />
-          </svg>
-        </button>
+  <main class="admin-layout" id="adminView" hidden>
+    <section class="admin-card" role="group" aria-label="Panel de control de widgets">
+      <header class="admin-header">
+        <p class="admin-kicker">Panel de control</p>
+        <h1>Widgets de cuenta atrás</h1>
+        <p>Desde aquí puedes crear, editar y eliminar widgets.</p>
+      </header>
 
-        <h2 class="config-title">Configurar widget</h2>
+      <form class="admin-form" id="createForm">
+        <h2>Crear widget</h2>
 
-        <label class="config-label" for="titleInput">Texto</label>
-        <input class="config-input" id="titleInput" type="text" maxlength="90" />
+        <label class="admin-label" for="newWidgetId">widget_id</label>
+        <input class="admin-input" id="newWidgetId" type="text" maxlength="60" pattern="[a-z0-9-]{2,60}" placeholder="oposicion-a" />
 
-        <label class="config-label" for="targetInput">Fecha y hora</label>
-        <input class="config-input" id="targetInput" type="datetime-local" />
+        <label class="admin-label" for="newTitle">Texto</label>
+        <input class="admin-input" id="newTitle" type="text" maxlength="90" placeholder="Días para el examen" />
 
-        <div class="color-grid" aria-label="Configuración de colores">
-          <label class="color-field" for="colorAInput">
+        <label class="admin-label" for="newTargetDate">Fecha y hora</label>
+        <input class="admin-input" id="newTargetDate" type="datetime-local" />
+
+        <div class="color-grid" aria-label="Colores del widget nuevo">
+          <label class="color-field" for="newColorA">
             <span>Fondo A</span>
-            <input id="colorAInput" type="color" value="#d95a85" />
+            <input id="newColorA" type="color" value="#d95a85" />
           </label>
-          <label class="color-field" for="colorBInput">
+          <label class="color-field" for="newColorB">
             <span>Fondo B</span>
-            <input id="colorBInput" type="color" value="#ef8fb0" />
+            <input id="newColorB" type="color" value="#ef8fb0" />
           </label>
-          <label class="color-field" for="colorCInput">
+          <label class="color-field" for="newColorC">
             <span>Fondo C</span>
-            <input id="colorCInput" type="color" value="#ef8fb0" />
+            <input id="newColorC" type="color" value="#ef8fb0" />
           </label>
-          <label class="color-field" for="textColorInput">
+          <label class="color-field" for="newTextColor">
             <span>Texto</span>
-            <input id="textColorInput" type="color" value="#ffffff" />
+            <input id="newTextColor" type="color" value="#ffffff" />
           </label>
         </div>
 
-        <p class="save-status" id="saveStatus" aria-live="polite"></p>
-        <button class="save-button" id="saveConfig" type="button">Guardar cambios</button>
-      </section>
+        <button class="save-button" id="createWidget" type="submit">Crear widget</button>
+      </form>
+
+      <p class="admin-status" id="adminStatus" aria-live="polite"></p>
+
+      <section class="admin-list" id="widgetList" aria-label="Listado de widgets"></section>
+    </section>
+  </main>
+
+  <main class="empty-layout" id="emptyView" hidden>
+    <section class="empty-card" role="group" aria-label="Acceso al widget">
+      <h1>Cuenta atrás</h1>
+      <p>Para ver un widget usa <code>?widgetId=tu-id</code>.</p>
+      <p>Para abrir el panel de control usa <code>?admin=tu-token</code>.</p>
     </section>
   </main>
 
