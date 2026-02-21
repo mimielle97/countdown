@@ -94,10 +94,13 @@ function setMode(mode) {
   if (emptyViewEl) emptyViewEl.hidden = mode !== "empty";
 
   document.body.classList.remove("mode-widget", "mode-admin", "mode-empty", "embed-mode");
+  document.documentElement.classList.remove("mode-widget", "mode-admin", "mode-empty", "embed-mode");
   document.body.classList.add(`mode-${mode}`);
+  document.documentElement.classList.add(`mode-${mode}`);
 
   if (mode === "widget" && isEmbedded) {
     document.body.classList.add("embed-mode");
+    document.documentElement.classList.add("embed-mode");
   }
 }
 
